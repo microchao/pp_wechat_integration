@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/pp_wechat_integration.iml" filepath="$PROJECT_DIR$/pp_wechat_integration.iml" />
       <module fileurl="file://$PROJECT_DIR$/ppsearch/ppsearch.iml" filepath="$PROJECT_DIR$/ppsearch/ppsearch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wechatlogin/wechatlogin.iml" filepath="$PROJECT_DIR$/wechatlogin/wechatlogin.iml" />
     </modules>
   </component>
 </project>

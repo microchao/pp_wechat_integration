@@ -9,11 +9,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="pp_wechat_integration" />
         <module name="ppsearch" />
+        <module name="wechatlogin" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="pp_wechat_integration" target="1.5" />
       <module name="ppsearch" target="1.8" />
+      <module name="wechatlogin" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
