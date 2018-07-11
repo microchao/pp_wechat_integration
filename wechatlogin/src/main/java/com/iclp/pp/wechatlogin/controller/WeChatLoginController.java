@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.iclp.wechat.util.WeChatLoginUtil;
+import com.iclp.pp.wechatlogin.util.WeChatLoginUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +28,7 @@ public class WeChatLoginController {
         JsonElement je = jp.parse(weChatLoginUtil.getUserInfo());
         String userInfo = gson.toJson(je);
         try {
-            userInfo = new String(userInfo.getBytes("ISO-8 859-1"), "UTF-8");
+            userInfo = new String(userInfo.getBytes("ISO-8859-1"), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

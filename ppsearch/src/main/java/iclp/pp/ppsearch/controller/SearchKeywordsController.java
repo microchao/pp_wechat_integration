@@ -252,6 +252,7 @@ public class SearchKeywordsController {
     }
 
 
+
 /*
 
     @RequestMapping(value = "/search",method = RequestMethod.GET)
@@ -269,5 +270,6 @@ public class SearchKeywordsController {
         return echostr;
     }
 */
+
 
 }

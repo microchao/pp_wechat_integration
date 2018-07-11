@@ -7,10 +7,19 @@
         </layout>
     </appender>
 
-    <logger name="com.iclp.pp.ppsearch.controller" level="TRACE"/>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>searchKeyword.txt</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
 
+    <logger name="com.iclp.pp.ppsearch.controller.SearchKeywordsController">
+        <appender-ref ref="FILE" />
+    </logger>
 
     <root level="debug">
         <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
     </root>
 </configuration>

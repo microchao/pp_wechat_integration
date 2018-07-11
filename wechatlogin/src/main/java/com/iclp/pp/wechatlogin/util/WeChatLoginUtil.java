@@ -1,7 +1,7 @@
 package com.iclp.pp.wechatlogin.util;
 
 import com.google.gson.Gson;
-import com.iclp.wechat.Model.TokenOpenId;
+import com.iclp.pp.wechatlogin.Model.TokenOpenId;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
