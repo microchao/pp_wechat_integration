@@ -45,7 +45,7 @@ public class SearchKeywordsController {
 
     private List<LoungeSearchModel> allLougeSearchModelList;
 
-    @RequestMapping(value = "/search",method = RequestMethod.POST)
+   @RequestMapping(value = "/search",method = RequestMethod.POST)
     public String search(@RequestParam(value = "name" ,required = false) String name ,
                          @RequestParam(value = "signature",required = false) String signature,
                          @RequestParam(value = "timestamp",required = false) String timestamp,
@@ -253,9 +253,9 @@ public class SearchKeywordsController {
 
 
 
-/*
 
-    @RequestMapping(value = "/search",method = RequestMethod.GET)
+
+ /*   @RequestMapping(value = "/search",method = RequestMethod.GET)
     public String search(@RequestParam(value = "name",required = false) String name,
                          @RequestParam(value = "signature",required = false) String signature,
                          @RequestParam(value = "echostr",required = false) String echostr,
@@ -268,8 +268,8 @@ public class SearchKeywordsController {
             System.out.print("测试数据："  + value);
         }
         return echostr;
-    }
-*/
+    }*/
+
 
 
 }
