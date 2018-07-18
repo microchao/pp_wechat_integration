@@ -14,6 +14,9 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,10 +26,16 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 @RestController
 @Scope("request")
+@RequestMapping(value = "/search")
+@EnableDiscoveryClient
 public class SearchKeywordsController {
 
     private static CloseableHttpClient httpClient;
@@ -45,13 +54,20 @@ public class SearchKeywordsController {
 
     private List<LoungeSearchModel> allLougeSearchModelList;
 
-   @RequestMapping(value = "/search",method = RequestMethod.POST)
+    @Autowired
+    private DiscoveryClient discoveryClient;
+
+    @RequestMapping(method =  { RequestMethod.GET, RequestMethod.POST })
     public String search(@RequestParam(value = "name" ,required = false) String name ,
                          @RequestParam(value = "signature",required = false) String signature,
                          @RequestParam(value = "timestamp",required = false) String timestamp,
                          @RequestParam(value = "nonce",required = false) String nonce,
                          @RequestParam(value = "openid",required = false) String openid,
+                         @RequestParam(value = "echostr",required = false) String echostr,
                          HttpServletRequest request) {
+        if(echostr != null) {
+            return echostr;
+        }
         stringBuffer = new StringBuffer();
         allLougeSearchModelList = new ArrayList<>();
         logger = LoggerFactory.getLogger(SearchKeywordsController.class);
@@ -67,6 +83,7 @@ public class SearchKeywordsController {
         }
         String lounghNewsXml = getLounghNewsXml(loungeSearchModel);
         logger.info("openid=" + openid + " 搜索：" + keyword + " 结束");
+        discoveryClient.getInstances("ppsearch");
         return lounghNewsXml;
     }
 
@@ -182,9 +199,7 @@ public class SearchKeywordsController {
     }
 
     private static Map<String,String> parseXml(HttpServletRequest request){
-
         Map<String,String> messageMap=new HashMap<String, String>();
-
         InputStream inputStream=null;
         try {
             //读取request Stream信息
@@ -193,7 +208,6 @@ public class SearchKeywordsController {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
         SAXReader reader = new SAXReader();
         Document document=null;
         try {
@@ -202,10 +216,8 @@ public class SearchKeywordsController {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
         Element root=document.getRootElement();
         List<Element> elementsList=root.elements();
-
         for(Element e:elementsList){
             messageMap.put(e.getName(),e.getText());
         }
@@ -216,7 +228,6 @@ public class SearchKeywordsController {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-
         return messageMap;
     }
 
@@ -250,26 +261,4 @@ public class SearchKeywordsController {
         }
         return count;
     }
-
-
-
-
-
- /*   @RequestMapping(value = "/search",method = RequestMethod.GET)
-    public String search(@RequestParam(value = "name",required = false) String name,
-                         @RequestParam(value = "signature",required = false) String signature,
-                         @RequestParam(value = "echostr",required = false) String echostr,
-                         @RequestParam(value = "timestamp",required = false) String timestamp,
-                         @RequestParam(value = "nonce",required = false) String nonce,
-                         HttpServletRequest request) {
-        Enumeration enumeration = request.getParameterNames();
-        if (enumeration.hasMoreElements()) {
-            String value = (String)enumeration.nextElement();//调用nextElement方法获得元素
-            System.out.print("测试数据："  + value);
-        }
-        return echostr;
-    }*/
-
-
-
 }
