@@ -3,11 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/configserver/configserver.iml" filepath="$PROJECT_DIR$/configserver/configserver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/demo/demo.iml" filepath="$PROJECT_DIR$/demo/demo.iml" />
       <module fileurl="file://$PROJECT_DIR$/eurekaserver/eurekaserver.iml" filepath="$PROJECT_DIR$/eurekaserver/eurekaserver.iml" />
       <module fileurl="file://$PROJECT_DIR$/pp_wechat_integration.iml" filepath="$PROJECT_DIR$/pp_wechat_integration.iml" />
       <module fileurl="file://$PROJECT_DIR$/ppsearch/ppsearch.iml" filepath="$PROJECT_DIR$/ppsearch/ppsearch.iml" />
-      <module fileurl="file://$PROJECT_DIR$/wechatlogin/webmanager.iml" filepath="$PROJECT_DIR$/wechatlogin/webmanager.iml" />
-      <module fileurl="file://$PROJECT_DIR$/wechatlogin/wechatlogin.iml" filepath="$PROJECT_DIR$/wechatlogin/wechatlogin.iml" />
     </modules>
   </component>
 </project>

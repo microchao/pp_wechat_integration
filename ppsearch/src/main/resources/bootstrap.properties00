@@ -1,2 +1,2 @@
-spring.application.name=roomservices
+spring.application.name=ppsearch
 spring.cloud.config.uri=http://localhost:9000
