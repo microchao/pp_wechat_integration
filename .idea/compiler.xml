@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="configserver" />
         <module name="demo" />
+        <module name="eurekaconsumer" />
         <module name="eurekaserver" />
         <module name="pp_wechat_integration" />
         <module name="ppsearch" />
@@ -17,6 +18,7 @@
     <bytecodeTargetLevel>
       <module name="configserver" target="1.8" />
       <module name="demo" target="1.8" />
+      <module name="eurekaconsumer" target="1.8" />
       <module name="eurekaserver" target="1.8" />
       <module name="pp_wechat_integration" target="1.5" />
       <module name="ppsearch" target="1.8" />
