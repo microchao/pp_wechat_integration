@@ -1,5 +1,0 @@
-server.port=80
-spring.cloud.config.discovery.enabled=true
-logging.level.root=INFO
-logging.level.org.springframework.web=DEBUG
-logging.level.org.hibernate=ERROR

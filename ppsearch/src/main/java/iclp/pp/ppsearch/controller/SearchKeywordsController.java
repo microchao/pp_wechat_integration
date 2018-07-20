@@ -35,7 +35,6 @@ import java.util.Map;
 @RestController
 @Scope("request")
 @RequestMapping(value = "/search")
-@EnableDiscoveryClient
 public class SearchKeywordsController {
 
     private static CloseableHttpClient httpClient;
