@@ -8,6 +8,7 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -27,9 +28,9 @@ class ServiceInstanceRestController {
 	@Autowired
 	private DiscoveryClient discoveryClient;
 
-	@RequestMapping("/aaa")
-	public List<ServiceInstance> serviceInstancesByApplicationName(
-			@PathVariable String applicationName) {
-		return this.discoveryClient.getInstances(applicationName);
+	@RequestMapping(value = "/aaa",method = RequestMethod.GET)
+	public String serviceInstancesByApplicationName() {
+		this.discoveryClient.getServices();
+		return "aaa";
 	}
 }

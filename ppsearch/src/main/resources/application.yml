@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: ppsearch
+
+server:
+  port: 80
+
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false

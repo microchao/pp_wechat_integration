@@ -53,8 +53,6 @@ public class SearchKeywordsController {
 
     private List<LoungeSearchModel> allLougeSearchModelList;
 
-    @Autowired
-    private DiscoveryClient discoveryClient;
 
     @RequestMapping(method =  { RequestMethod.GET, RequestMethod.POST })
     public String search(@RequestParam(value = "name" ,required = false) String name ,
@@ -82,7 +80,6 @@ public class SearchKeywordsController {
         }
         String lounghNewsXml = getLounghNewsXml(loungeSearchModel);
         logger.info("openid=" + openid + " 搜索：" + keyword + " 结束");
-        discoveryClient.getInstances("ppsearch");
         return lounghNewsXml;
     }
 
@@ -157,11 +154,15 @@ public class SearchKeywordsController {
         int limit = 0;
         for (LoungeSearchModel loungeSearchModelEntity : allLougeSearchModelList) {
             limit ++;
+            String picUrl = "https://d10mzz35brm2m8.cloudfront.net/Global/Logos/logo-rounded-7d731234-66ec-45eb-9134-7fdd1b29361b.png?h=46&la=zh-CN&w=46";
+            if(topLoungeSearchModel == null) {
+                picUrl = "https://d10mzz35brm2m8.cloudfront.net/Global/Logos/logo-footer-f5552661-a02c-4aae-afac-4cd7d17c3246.png?h=101&la=zh-CN&w=236";
+            }
             if (topLoungeSearchModel != null &&!loungeSearchModelEntity.getItemId().equals(topLoungeSearchModel.getItemId())){
                 stringBuffer.append("<item>" +
                         "  <Title>" + loungeSearchModelEntity.getName() + "</Title> " +
                         "  <Description>" + loungeSearchModelEntity.getCode() + "</Description>" +
-                        "  <PicUrl>https://d10mzz35brm2m8.cloudfront.net/Global/Logos/logo-rounded-7d731234-66ec-45eb-9134-7fdd1b29361b.png?h=46&la=zh-CN&w=46</PicUrl>" +
+                        "  <PicUrl>"  + picUrl +"</PicUrl>" +
                         "  <Url>" + loungeSearchModelEntity.getUrl() + "</Url>" +
                         "</item>");
                 if (loungeSearchModelEntity.getChildren().size() > 0) {
@@ -173,7 +174,7 @@ public class SearchKeywordsController {
                 stringBuffer.append("<item>" +
                         "  <Title>" + loungeSearchModelEntity.getName() + "</Title> " +
                         "  <Description>" + loungeSearchModelEntity.getCode() + "</Description>" +
-                        "  <PicUrl>https://d10mzz35brm2m8.cloudfront.net/Global/Logos/logo-rounded-7d731234-66ec-45eb-9134-7fdd1b29361b.png?h=46&la=zh-CN&w=46</PicUrl>" +
+                        "  <PicUrl>"  + picUrl +"</PicUrl>" +
                         "  <Url>" + loungeSearchModelEntity.getUrl() + "</Url>" +
                         "</item>");
                 if (loungeSearchModelEntity.getChildren().size() > 0) {
@@ -249,7 +250,7 @@ public class SearchKeywordsController {
             e.printStackTrace();
         }
         long endTime = System.currentTimeMillis();
-        logger.debug("此次" + keyword + "请求花费" + (endTime - startTime) + "/ms");
+        logger.info("此次" + keyword + "请求花费" + (endTime - startTime) + "/ms");
         return loungeSearchModel;
     }
 
