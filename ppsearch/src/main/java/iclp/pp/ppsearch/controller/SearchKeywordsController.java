@@ -15,8 +15,8 @@ import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+//import org.springframework.cloud.client.discovery.DiscoveryClient;
+//import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,7 +34,6 @@ import java.util.Map;
 
 @RestController
 @Scope("request")
-@RequestMapping(value = "/search")
 public class SearchKeywordsController {
 
     private static CloseableHttpClient httpClient;
@@ -54,7 +53,7 @@ public class SearchKeywordsController {
     private List<LoungeSearchModel> allLougeSearchModelList;
 
 
-    @RequestMapping(method =  { RequestMethod.GET, RequestMethod.POST })
+    @RequestMapping(value="/search",method =  { RequestMethod.GET, RequestMethod.POST })
     public String search(@RequestParam(value = "name" ,required = false) String name ,
                          @RequestParam(value = "signature",required = false) String signature,
                          @RequestParam(value = "timestamp",required = false) String timestamp,
@@ -81,6 +80,11 @@ public class SearchKeywordsController {
         String lounghNewsXml = getLounghNewsXml(loungeSearchModel);
         logger.info("openid=" + openid + " 搜索：" + keyword + " 结束");
         return lounghNewsXml;
+    }
+
+    @RequestMapping(value="/test",method =  { RequestMethod.GET, RequestMethod.POST })
+    public String test() {
+        return "test";
     }
 
     /**

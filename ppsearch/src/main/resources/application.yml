@@ -1,12 +1,12 @@
-spring:
-  application:
-    name: ppsearch
-
 server:
   port: 80
 
+spring:
+   cloud:
+      discovery:
+         enabled:false
 
-eureka:
-  client:
-    registerWithEureka: false
-    fetchRegistry: false
+#eureka:
+#  client:
+#    registerWithEureka: false
+#    fetchRegistry: false
