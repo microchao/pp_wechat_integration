@@ -2,6 +2,7 @@ package iclp.pp.ppsearch.controller;
 
 import com.google.gson.Gson;
 import iclp.pp.ppsearch.model.LoungeSearchModel;
+import iclp.pp.ppsearch.util.XmlUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -52,6 +53,7 @@ public class SearchKeywordsController {
 
     private List<LoungeSearchModel> allLougeSearchModelList;
 
+    private  String keyword;
 
     @RequestMapping(value="/search",method =  { RequestMethod.GET, RequestMethod.POST })
     public String search(@RequestParam(value = "name" ,required = false) String name ,
@@ -67,8 +69,8 @@ public class SearchKeywordsController {
         stringBuffer = new StringBuffer();
         allLougeSearchModelList = new ArrayList<>();
         logger = LoggerFactory.getLogger(SearchKeywordsController.class);
-        Map map = parseXml(request);
-        String keyword = map.get("Content").toString();
+        Map map = XmlUtil.parseXml(request);
+        keyword = map.get("Content").toString();
         logger.info("openid=" + openid + " 搜索：" + keyword + " 开始");
         this.toUserName = openid;
         this.FromUserName = map.get("ToUserName").toString();
@@ -77,6 +79,7 @@ public class SearchKeywordsController {
         if(loungeSearchModel.getResults().get(0).getItemId().equals("00000000-0000-0000-0000-000000000000")) {
             return getNoResult();
         }
+        sortLoungeSearchModel(loungeSearchModel);
         String lounghNewsXml = getLounghNewsXml(loungeSearchModel);
         logger.info("openid=" + openid + " 搜索：" + keyword + " 结束");
         return lounghNewsXml;
@@ -102,6 +105,24 @@ public class SearchKeywordsController {
         return xml;
     }
 
+    private void sortLoungeSearchModel(LoungeSearchModel tempModel) {
+        addLoungeModel(tempModel.getResults());
+        List<LoungeSearchModel> result  = new ArrayList<>();
+        for(LoungeSearchModel model : allLougeSearchModelList) {
+            if(model.getCode() == null) {
+               result.add(0,model);
+            }
+            if(model.getCode() != null && model.getCode().equals(keyword)) {
+                addToTop(allLougeSearchModelList,model);
+            }
+        }
+    }
+
+    private void addToTop(List<LoungeSearchModel> list,LoungeSearchModel loungeSearchModel1) {
+        allLougeSearchModelList.remove(loungeSearchModel1);
+        allLougeSearchModelList.add(loungeSearchModel1);
+    }
+
     /**
      * 返回关键字查询结果
      * @param loungeSearchModel
@@ -116,8 +137,8 @@ public class SearchKeywordsController {
                     "<MsgType>news</MsgType>" +
                     "<ArticleCount></ArticleCount>" +
                     "<Articles>");
-        addLoungeModel(loungeSearchModel.getResults());
-        setTopOne(allLougeSearchModelList);
+/*//        addLoungeModel(loungeSearchModel.getResults());
+//        setTopOne(allLougeSearchModelList);
         if(topLoungeSearchModel != null) {
             stringBuffer.append( "<item>" +
                     "  <Title>" + topLoungeSearchModel.getName() +  "</Title> " +
@@ -125,7 +146,7 @@ public class SearchKeywordsController {
                     "  <PicUrl>https://d10mzz35brm2m8.cloudfront.net/Global/Logos/logo-footer-f5552661-a02c-4aae-afac-4cd7d17c3246.png?h=101&la=zh-CN&w=236</PicUrl>" +
                     "  <Url>" + topLoungeSearchModel.getUrl() + "</Url>" +
                     "</item>");
-        }
+        }*/
         appendChildItemXml(allLougeSearchModelList);
         stringBuffer.append("</Articles>" +
                 "</xml>");
@@ -159,7 +180,7 @@ public class SearchKeywordsController {
         for (LoungeSearchModel loungeSearchModelEntity : allLougeSearchModelList) {
             limit ++;
             String picUrl = "https://d10mzz35brm2m8.cloudfront.net/Global/Logos/logo-rounded-7d731234-66ec-45eb-9134-7fdd1b29361b.png?h=46&la=zh-CN&w=46";
-            if(topLoungeSearchModel == null) {
+            if(limit==1) {
                 picUrl = "https://d10mzz35brm2m8.cloudfront.net/Global/Logos/logo-footer-f5552661-a02c-4aae-afac-4cd7d17c3246.png?h=101&la=zh-CN&w=236";
             }
             if (topLoungeSearchModel != null &&!loungeSearchModelEntity.getItemId().equals(topLoungeSearchModel.getItemId())){
@@ -202,38 +223,7 @@ public class SearchKeywordsController {
         }
     }
 
-    private static Map<String,String> parseXml(HttpServletRequest request){
-        Map<String,String> messageMap=new HashMap<String, String>();
-        InputStream inputStream=null;
-        try {
-            //读取request Stream信息
-            inputStream=request.getInputStream();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        SAXReader reader = new SAXReader();
-        Document document=null;
-        try {
-            document = reader.read(inputStream);
-        } catch (DocumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        Element root=document.getRootElement();
-        List<Element> elementsList=root.elements();
-        for(Element e:elementsList){
-            messageMap.put(e.getName(),e.getText());
-        }
-        try {
-            inputStream.close();
-            inputStream=null;
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-        return messageMap;
-    }
+
 
     private LoungeSearchModel convertToLoungeSearchModel(String keyword) {
         long startTime = System.currentTimeMillis();
