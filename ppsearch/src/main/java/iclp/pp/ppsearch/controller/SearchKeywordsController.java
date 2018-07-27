@@ -108,14 +108,22 @@ public class SearchKeywordsController {
     private void sortLoungeSearchModel(LoungeSearchModel tempModel) {
         addLoungeModel(tempModel.getResults());
         List<LoungeSearchModel> result  = new ArrayList<>();
+        LoungeSearchModel topOne = null;
         for(LoungeSearchModel model : allLougeSearchModelList) {
             if(model.getCode() == null) {
                result.add(0,model);
+               continue;
             }
-            if(model.getCode() != null && model.getCode().equals(keyword)) {
-                addToTop(allLougeSearchModelList,model);
+            if(model.getCode() != null && model.getCode().toLowerCase().equals(keyword.toLowerCase())) {
+                topOne = model;
             }
+            result.add(model);
         }
+        if(topOne != null) {
+            result.remove(topOne);
+            result.add(0,topOne);
+        }
+        allLougeSearchModelList = result;
     }
 
     private void addToTop(List<LoungeSearchModel> list,LoungeSearchModel loungeSearchModel1) {
@@ -147,17 +155,17 @@ public class SearchKeywordsController {
                     "  <Url>" + topLoungeSearchModel.getUrl() + "</Url>" +
                     "</item>");
         }*/
-        appendChildItemXml(allLougeSearchModelList);
+        appendChildItemXml();
         stringBuffer.append("</Articles>" +
                 "</xml>");
         String xml = stringBuffer.toString().replace("<ArticleCount></ArticleCount>","<ArticleCount>" + articleCount +"</ArticleCount>");
         return xml;
     }
 
-    /**
+   /* *//**
      * 递归选择出news第一条
      * @param loungeSearchModelList
-     */
+     *//*
     private void setTopOne(List<LoungeSearchModel> loungeSearchModelList) {
         for (LoungeSearchModel loungeSearchModelEntity : loungeSearchModelList) {
             if(loungeSearchModelEntity.getCode()==null) {
@@ -168,45 +176,27 @@ public class SearchKeywordsController {
                 setTopOne(loungeSearchModelEntity.getChildren());
             }
         }
-    }
+    }*/
 
 
     /**
      * 递归添加children
-     * @param allLougeSearchModelList
      */
-    private void appendChildItemXml( List<LoungeSearchModel> allLougeSearchModelList) {
+    private void appendChildItemXml() {
         int limit = 0;
         for (LoungeSearchModel loungeSearchModelEntity : allLougeSearchModelList) {
-            limit ++;
+            limit++;
             String picUrl = "https://d10mzz35brm2m8.cloudfront.net/Global/Logos/logo-rounded-7d731234-66ec-45eb-9134-7fdd1b29361b.png?h=46&la=zh-CN&w=46";
-            if(limit==1) {
+            if (limit == 1) {
                 picUrl = "https://d10mzz35brm2m8.cloudfront.net/Global/Logos/logo-footer-f5552661-a02c-4aae-afac-4cd7d17c3246.png?h=101&la=zh-CN&w=236";
             }
-            if (topLoungeSearchModel != null &&!loungeSearchModelEntity.getItemId().equals(topLoungeSearchModel.getItemId())){
-                stringBuffer.append("<item>" +
-                        "  <Title>" + loungeSearchModelEntity.getName() + "</Title> " +
-                        "  <Description>" + loungeSearchModelEntity.getCode() + "</Description>" +
-                        "  <PicUrl>"  + picUrl +"</PicUrl>" +
-                        "  <Url>" + loungeSearchModelEntity.getUrl() + "</Url>" +
-                        "</item>");
-                if (loungeSearchModelEntity.getChildren().size() > 0) {
-                    appendChildItemXml(loungeSearchModelEntity.getChildren());
-                }
-            }
-            if(topLoungeSearchModel == null)
-            {
-                stringBuffer.append("<item>" +
-                        "  <Title>" + loungeSearchModelEntity.getName() + "</Title> " +
-                        "  <Description>" + loungeSearchModelEntity.getCode() + "</Description>" +
-                        "  <PicUrl>"  + picUrl +"</PicUrl>" +
-                        "  <Url>" + loungeSearchModelEntity.getUrl() + "</Url>" +
-                        "</item>");
-                if (loungeSearchModelEntity.getChildren().size() > 0) {
-                    appendChildItemXml(loungeSearchModelEntity.getChildren());
-                }
-            }
-            if(limit == 8) break;
+            stringBuffer.append("<item>" +
+                    "  <Title>" + loungeSearchModelEntity.getName() + "</Title> " +
+                    "  <Description>" + loungeSearchModelEntity.getCode() + "</Description>" +
+                    "  <PicUrl>" + picUrl + "</PicUrl>" +
+                    "  <Url>" + loungeSearchModelEntity.getUrl() + "</Url>" +
+                    "</item>");
+            if (limit == 8) break;
         }
     }
 
