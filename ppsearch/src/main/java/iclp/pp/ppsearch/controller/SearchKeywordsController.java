@@ -23,10 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-//import org.springframework.cloud.client.discovery.DiscoveryClient;
-//import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-
-
 @RestController
 @Scope("request")
 public class SearchKeywordsController {
@@ -120,11 +116,6 @@ public class SearchKeywordsController {
         allLougeSearchModelList = result;
     }
 
-    private void addToTop(List<LoungeSearchModel> list,LoungeSearchModel loungeSearchModel1) {
-        allLougeSearchModelList.remove(loungeSearchModel1);
-        allLougeSearchModelList.add(loungeSearchModel1);
-    }
-
     /**
      * 返回关键字查询结果
      * @param loungeSearchModel
@@ -139,39 +130,12 @@ public class SearchKeywordsController {
                     "<MsgType>news</MsgType>" +
                     "<ArticleCount></ArticleCount>" +
                     "<Articles>");
-/*//        addLoungeModel(loungeSearchModel.getResults());
-//        setTopOne(allLougeSearchModelList);
-        if(topLoungeSearchModel != null) {
-            stringBuffer.append( "<item>" +
-                    "  <Title>" + topLoungeSearchModel.getName() +  "</Title> " +
-                    "  <Description>" + topLoungeSearchModel.getParent() + " " + topLoungeSearchModel.getName() + "</Description>" +
-                    "  <PicUrl>https://d10mzz35brm2m8.cloudfront.net/Global/Logos/logo-footer-f5552661-a02c-4aae-afac-4cd7d17c3246.png?h=101&la=zh-CN&w=236</PicUrl>" +
-                    "  <Url>" + topLoungeSearchModel.getUrl() + "</Url>" +
-                    "</item>");
-        }*/
         appendChildItemXml();
         stringBuffer.append("</Articles>" +
                 "</xml>");
         String xml = stringBuffer.toString().replace("<ArticleCount></ArticleCount>","<ArticleCount>" + articleCount +"</ArticleCount>");
         return xml;
     }
-
-   /* *//**
-     * 递归选择出news第一条
-     * @param loungeSearchModelList
-     *//*
-    private void setTopOne(List<LoungeSearchModel> loungeSearchModelList) {
-        for (LoungeSearchModel loungeSearchModelEntity : loungeSearchModelList) {
-            if(loungeSearchModelEntity.getCode()==null) {
-                topLoungeSearchModel = loungeSearchModelEntity;
-                break;
-            }
-            if(loungeSearchModelEntity.getChildren().size() > 0) {
-                setTopOne(loungeSearchModelEntity.getChildren());
-            }
-        }
-    }*/
-
 
     /**
      * 递归添加children
@@ -206,8 +170,6 @@ public class SearchKeywordsController {
             }
         }
     }
-
-
 
     private LoungeSearchModel convertToLoungeSearchModel(String keyword) {
         long startTime = System.currentTimeMillis();
