@@ -8,7 +8,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="configserver" />
-        <module name="demo" />
         <module name="eurekaconsumer" />
         <module name="eurekaserver" />
         <module name="pp_wechat_integration" />
