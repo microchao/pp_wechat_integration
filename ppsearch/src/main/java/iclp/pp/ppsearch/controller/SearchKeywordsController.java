@@ -2,7 +2,7 @@ package iclp.pp.ppsearch.controller;
 
 import com.google.gson.Gson;
 import iclp.pp.ppsearch.model.LoungeSearchModel;
-import iclp.pp.ppsearch.util.XmlUtil;
+import iclp.pp.ppsearch.model.RequestJsonModel;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -12,10 +12,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -44,7 +41,7 @@ public class SearchKeywordsController {
     private List<LoungeSearchModel> allLougeSearchModelList;
 
     private  String keyword;
-
+/*
     @RequestMapping(value="/txtsearch",method =  { RequestMethod.GET, RequestMethod.POST })
     public String search(@RequestParam(value = "name" ,required = false) String name ,
                          @RequestParam(value = "signature",required = false) String signature,
@@ -52,18 +49,25 @@ public class SearchKeywordsController {
                          @RequestParam(value = "nonce",required = false) String nonce,
                          @RequestParam(value = "openid",required = false) String openid,
                          @RequestParam(value = "echostr",required = false) String echostr,
-                         HttpServletRequest request) {
-        if(echostr != null) {
-            return echostr;
+                         HttpServletRequest request) {*/
+    @RequestMapping(value="/txtsearch",method =  { RequestMethod.GET, RequestMethod.POST })
+    public String search(@RequestBody String jsonString,
+                     HttpServletRequest request) {
+
+        Gson gson = new Gson();
+        RequestJsonModel requestJsonModel = gson.fromJson(jsonString,RequestJsonModel.class);
+
+        if(requestJsonModel.getEchostr() != null) {
+            return requestJsonModel.getEchostr();
         }
         stringBuffer = new StringBuffer();
         allLougeSearchModelList = new ArrayList<>();
         logger = LoggerFactory.getLogger(SearchKeywordsController.class);
-        Map map = XmlUtil.parseXml(request);
-        keyword = map.get("Content").toString();
-        logger.info("openid=" + openid + " 搜索：" + keyword + " 开始");
-        this.toUserName = openid;
-        this.FromUserName = map.get("ToUserName").toString();
+//        Map map = XmlUtil.parseXml(request);
+        keyword = requestJsonModel.getContent();
+        logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 开始");
+        this.toUserName = requestJsonModel.getOpenid();
+        this.FromUserName = requestJsonModel.getToUserName();
 
         LoungeSearchModel loungeSearchModel = convertToLoungeSearchModel(keyword);
         if(loungeSearchModel.getResults().get(0).getItemId().equals("00000000-0000-0000-0000-000000000000")) {
@@ -71,7 +75,7 @@ public class SearchKeywordsController {
         }
         sortLoungeSearchModel(loungeSearchModel);
         String lounghNewsXml = getLounghNewsXml(loungeSearchModel);
-        logger.info("openid=" + openid + " 搜索：" + keyword + " 结束");
+        logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 结束");
         return lounghNewsXml;
     }
 

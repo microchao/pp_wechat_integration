@@ -1,4 +1,4 @@
-package iclp.pp.ppsearch.util;
+package com.iclp.wechat.integration.wxgateway.controller;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
