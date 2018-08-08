@@ -45,7 +45,7 @@ public class SearchKeywordsController {
 
     private  String keyword;
 
-    @RequestMapping(value="/search",method =  { RequestMethod.GET, RequestMethod.POST })
+    @RequestMapping(value="/txtsearch",method =  { RequestMethod.GET, RequestMethod.POST })
     public String search(@RequestParam(value = "name" ,required = false) String name ,
                          @RequestParam(value = "signature",required = false) String signature,
                          @RequestParam(value = "timestamp",required = false) String timestamp,

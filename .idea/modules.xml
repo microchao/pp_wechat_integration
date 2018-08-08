@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/eurekaserver/eurekaserver.iml" filepath="$PROJECT_DIR$/eurekaserver/eurekaserver.iml" />
       <module fileurl="file://$PROJECT_DIR$/pp_wechat_integration.iml" filepath="$PROJECT_DIR$/pp_wechat_integration.iml" />
       <module fileurl="file://$PROJECT_DIR$/ppsearch/ppsearch.iml" filepath="$PROJECT_DIR$/ppsearch/ppsearch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wxgateway/wxgateway.iml" filepath="$PROJECT_DIR$/wxgateway/wxgateway.iml" />
     </modules>
   </component>
 </project>
