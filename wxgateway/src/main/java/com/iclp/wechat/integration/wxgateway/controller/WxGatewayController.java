@@ -7,8 +7,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,16 +37,29 @@ public class WxGatewayController {
         map.put("openid",openid);
         map.put("echostr",echostr);
         Map requestMap = XmlUtil.parseXml(request);
-        map.put("content",requestMap.get("Content").toString());
-        map.put("toUserName",requestMap.get("ToUserName").toString());
-        Gson gson = new Gson();
-        String requestJson = gson.toJson(map);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestParam = new HttpEntity<String>(requestJson, headers);
-        String object = restTemplate().postForObject("http://ppsearch:8888/txtsearch",requestParam,String.class);
-        return object;
+        if(requestMap.get("MsgType").equals("text")) {
+            map.put("content",requestMap.get("Content").toString());
+            map.put("toUserName",requestMap.get("ToUserName").toString());
+            Gson gson = new Gson();
+            String requestJson = gson.toJson(map);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> requestParam = new HttpEntity<String>(requestJson, headers);
+            String object = restTemplate().postForObject("http://ppsearch:8888/txtsearch",requestParam,String.class);
+            return object;
+        }else{
+            String xml = "<xml> " +
+                    "       <ToUserName>"  + openid + "</ToUserName> " +
+                    "       <FromUserName>" + requestMap.get("ToUserName") +"</FromUserName> " +
+                    "       <CreateTime>12345678</CreateTime> " +
+                    "       <MsgType>text</MsgType> " +
+                    "       <Content>暂不支持该类型</Content> " +
+                    "     </xml>";
+            return xml;
+        }
+
     }
+
 
     @Bean
     public RestTemplate restTemplate() {

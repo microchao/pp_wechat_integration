@@ -12,13 +12,15 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @Scope("request")
@@ -41,15 +43,7 @@ public class SearchKeywordsController {
     private List<LoungeSearchModel> allLougeSearchModelList;
 
     private  String keyword;
-/*
-    @RequestMapping(value="/txtsearch",method =  { RequestMethod.GET, RequestMethod.POST })
-    public String search(@RequestParam(value = "name" ,required = false) String name ,
-                         @RequestParam(value = "signature",required = false) String signature,
-                         @RequestParam(value = "timestamp",required = false) String timestamp,
-                         @RequestParam(value = "nonce",required = false) String nonce,
-                         @RequestParam(value = "openid",required = false) String openid,
-                         @RequestParam(value = "echostr",required = false) String echostr,
-                         HttpServletRequest request) {*/
+
     @RequestMapping(value="/txtsearch",method =  { RequestMethod.GET, RequestMethod.POST })
     public String search(@RequestBody String jsonString,
                      HttpServletRequest request) {

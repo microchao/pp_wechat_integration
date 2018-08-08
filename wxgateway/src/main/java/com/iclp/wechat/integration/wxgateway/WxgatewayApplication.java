@@ -29,10 +29,4 @@ class ServiceInstanceRestController {
 		return new RestTemplate();
 	}
 
-//	@RequestMapping(value = "/search",method = RequestMethod.GET)
-	public String serviceInstancesByApplicationName() {
-		String object =   restTemplate().getForObject("http://ppsearch:8888/test",String.class);
-//		this.discoveryClient.getInstances("ppsearch");
-		return object.toString();
-	}
 }
