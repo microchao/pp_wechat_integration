@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @Scope("request")
@@ -40,8 +41,6 @@ public class SearchKeywordsController {
 
     private StringBuffer stringBuffer;
 
-    private LoungeSearchModel topLoungeSearchModel;
-
     private List<LoungeSearchModel> allLougeSearchModelList;
 
     private  String keyword;
@@ -54,6 +53,8 @@ public class SearchKeywordsController {
                      HttpServletRequest request) {
 
         Gson gson = new Gson();
+
+
         RequestJsonModel requestJsonModel = gson.fromJson(jsonString,RequestJsonModel.class);
 
         if(requestJsonModel.getEchostr() != null) {
@@ -69,14 +70,24 @@ public class SearchKeywordsController {
         this.FromUserName = requestJsonModel.getToUserName();
 
         LoungeSearchModel loungeSearchModel = convertToLoungeSearchModel(keyword);
+
         if(loungeSearchModel.getResults().get(0).getItemId().equals("00000000-0000-0000-0000-000000000000")) {
             return getNoResult();
         }
         sortLoungeSearchModel(loungeSearchModel);
+
+        // 插入redis
+        saveToRedis(keyword,loungeSearchModel);
+
         String lounghNewsXml = getLounghNewsXml(loungeSearchModel);
         logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 结束");
 
         return lounghNewsXml;
+    }
+
+    private void saveToRedis(String keyword,LoungeSearchModel loungeSearchModel) {
+        Gson gson = new Gson();
+        redisTemplate.opsForValue().set(keyword,gson.toJson(loungeSearchModel,LoungeSearchModel.class),1,TimeUnit.DAYS);
     }
 
     @RequestMapping(value="/test",method =  { RequestMethod.GET, RequestMethod.POST })

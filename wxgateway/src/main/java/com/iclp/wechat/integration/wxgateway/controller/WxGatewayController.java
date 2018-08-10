@@ -29,6 +29,9 @@ public class WxGatewayController {
                          @RequestParam(value = "openid", required = false) String openid,
                          @RequestParam(value = "echostr", required = false) String echostr,
                          HttpServletRequest request) {
+        if(echostr!= null ) {
+            return echostr;
+        }
         Map<String,String> map = new HashMap<>();
         map.put("name", name);
         map.put("signature",signature);

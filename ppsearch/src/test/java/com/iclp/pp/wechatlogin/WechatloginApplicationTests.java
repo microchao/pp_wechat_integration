@@ -13,7 +13,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Import(RedisTemplateConfig.class)
-@SpringBootConfiguration
 public class WechatloginApplicationTests {
 
     @Autowired
@@ -23,7 +22,7 @@ public class WechatloginApplicationTests {
     @Test
 	public void contextLoads() {
 
-
+        redisTemplate.opsForValue().set("123","test");
 	}
 
 }
