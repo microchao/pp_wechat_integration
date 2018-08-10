@@ -11,7 +11,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,6 +46,9 @@ public class SearchKeywordsController {
 
     private  String keyword;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @RequestMapping(value="/txtsearch",method =  { RequestMethod.GET, RequestMethod.POST })
     public String search(@RequestBody String jsonString,
                      HttpServletRequest request) {
@@ -70,11 +75,13 @@ public class SearchKeywordsController {
         sortLoungeSearchModel(loungeSearchModel);
         String lounghNewsXml = getLounghNewsXml(loungeSearchModel);
         logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 结束");
+
         return lounghNewsXml;
     }
 
     @RequestMapping(value="/test",method =  { RequestMethod.GET, RequestMethod.POST })
     public String test() {
+        System.out.println(redisTemplate.opsForValue().get("test"));
         return "test";
     }
 
