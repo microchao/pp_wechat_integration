@@ -3,6 +3,7 @@ package iclp.pp.ppsearch.controller;
 import com.google.gson.Gson;
 import iclp.pp.ppsearch.model.LoungeSearchModel;
 import iclp.pp.ppsearch.model.RequestJsonModel;
+import iclp.pp.ppsearch.util.JsonUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -52,11 +53,8 @@ public class SearchKeywordsController {
     public String search(@RequestBody String jsonString,
                      HttpServletRequest request) {
 
-        Gson gson = new Gson();
-
-
+        Gson gson = JsonUtil.instanceOfGson();
         RequestJsonModel requestJsonModel = gson.fromJson(jsonString,RequestJsonModel.class);
-
         if(requestJsonModel.getEchostr() != null) {
             return requestJsonModel.getEchostr();
         }
@@ -65,29 +63,52 @@ public class SearchKeywordsController {
         logger = LoggerFactory.getLogger(SearchKeywordsController.class);
 //        Map map = XmlUtil.parseXml(request);
         keyword = requestJsonModel.getContent();
-        logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 开始");
         this.toUserName = requestJsonModel.getOpenid();
         this.FromUserName = requestJsonModel.getToUserName();
-
-        LoungeSearchModel loungeSearchModel = convertToLoungeSearchModel(keyword);
-
-        if(loungeSearchModel.getResults().get(0).getItemId().equals("00000000-0000-0000-0000-000000000000")) {
-            return getNoResult();
+        LoungeSearchModel redisLoungeModel = getByRedis(keyword);
+        if(redisLoungeModel != null) {
+            long redisStartTime = System.currentTimeMillis();
+            sortLoungeSearchModel(redisLoungeModel);
+            String xml = getLounghNewsXml();
+            long redisEndTime = System.currentTimeMillis();
+            logger.info("redis此次" + keyword + "请求花费" + (redisEndTime - redisStartTime) + "/ms");
+            return xml;
         }
-        sortLoungeSearchModel(loungeSearchModel);
+        else{
+            logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 开始");
+            LoungeSearchModel loungeSearchModel = convertToLoungeSearchModel(keyword);
+            if(loungeSearchModel.getResults().get(0).getItemId().equals("00000000-0000-0000-0000-000000000000")) {
+                return getNoResult();
+            }
+            sortLoungeSearchModel(loungeSearchModel);
 
-        // 插入redis
-        saveToRedis(keyword,loungeSearchModel);
+            // 插入redis
+            saveToRedis(keyword,loungeSearchModel);
 
-        String lounghNewsXml = getLounghNewsXml(loungeSearchModel);
-        logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 结束");
+            String lounghNewsXml = getLounghNewsXml();
+            logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 结束");
 
-        return lounghNewsXml;
+            return lounghNewsXml;
+        }
     }
 
     private void saveToRedis(String keyword,LoungeSearchModel loungeSearchModel) {
-        Gson gson = new Gson();
-        redisTemplate.opsForValue().set(keyword,gson.toJson(loungeSearchModel,LoungeSearchModel.class),1,TimeUnit.DAYS);
+        Gson gson = JsonUtil.instanceOfGson();
+        String json = gson.toJson(loungeSearchModel,LoungeSearchModel.class);
+        redisTemplate.opsForValue().set(keyword, json,1,TimeUnit.DAYS);
+        logger.info("存redis key=" + keyword + ", value=" + json + "成功");
+    }
+
+    private LoungeSearchModel getByRedis(String keyword) {
+        Gson gson  = JsonUtil.instanceOfGson();
+        Object object = redisTemplate.opsForValue().get(keyword);
+        if(object != null) {
+            String json = object.toString();
+            articleCount = getAricleCount(json);
+            logger.info("获取redis key=" + keyword + ", value=" + json + "成功");
+            return gson.fromJson(json,LoungeSearchModel.class);
+        }
+        return null;
     }
 
     @RequestMapping(value="/test",method =  { RequestMethod.GET, RequestMethod.POST })
@@ -134,10 +155,9 @@ public class SearchKeywordsController {
 
     /**
      * 返回关键字查询结果
-     * @param loungeSearchModel
      * @return
      */
-    private String getLounghNewsXml(LoungeSearchModel loungeSearchModel) {
+    private String getLounghNewsXml() {
         stringBuffer.append(
                 "<xml>" +
                     "<ToUserName>" + toUserName + "</ToUserName>" +
