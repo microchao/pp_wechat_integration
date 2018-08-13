@@ -6,6 +6,9 @@ spring:
       discovery:
          enabled:false
 
+logging:
+  file: /wxlog/ppsearch.log
+
 #eureka:
 #  client:
 #    registerWithEureka: false

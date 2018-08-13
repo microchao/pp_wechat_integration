@@ -21,4 +21,6 @@ public class LoungeSearchModel {
 
     private List<LoungeSearchModel> Results;
 
+    private int articleCount;
+
 }

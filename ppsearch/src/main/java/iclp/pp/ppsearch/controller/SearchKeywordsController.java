@@ -68,6 +68,7 @@ public class SearchKeywordsController {
         LoungeSearchModel redisLoungeModel = getByRedis(keyword);
         if(redisLoungeModel != null) {
             long redisStartTime = System.currentTimeMillis();
+            articleCount = redisLoungeModel.getArticleCount();
             sortLoungeSearchModel(redisLoungeModel);
             String xml = getLounghNewsXml();
             long redisEndTime = System.currentTimeMillis();
@@ -104,7 +105,7 @@ public class SearchKeywordsController {
         Object object = redisTemplate.opsForValue().get(keyword);
         if(object != null) {
             String json = object.toString();
-            articleCount = getAricleCount(json) + 1;
+//            articleCount = getAricleCount(json);
             logger.info("获取redis key=" + keyword + ", value=" + json + "成功");
             return gson.fromJson(json,LoungeSearchModel.class);
         }
@@ -227,6 +228,7 @@ public class SearchKeywordsController {
         }
         long endTime = System.currentTimeMillis();
         logger.info("此次" + keyword + "请求花费" + (endTime - startTime) + "/ms");
+        loungeSearchModel.setArticleCount(articleCount);
         return loungeSearchModel;
     }
 
