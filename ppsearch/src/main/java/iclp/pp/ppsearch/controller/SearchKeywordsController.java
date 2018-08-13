@@ -104,7 +104,7 @@ public class SearchKeywordsController {
         Object object = redisTemplate.opsForValue().get(keyword);
         if(object != null) {
             String json = object.toString();
-            articleCount = getAricleCount(json);
+            articleCount = getAricleCount(json) + 1;
             logger.info("获取redis key=" + keyword + ", value=" + json + "成功");
             return gson.fromJson(json,LoungeSearchModel.class);
         }
