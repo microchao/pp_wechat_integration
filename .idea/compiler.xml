@@ -7,8 +7,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="adminapi" />
         <module name="configserver" />
-        <module name="eurekaconsumer" />
         <module name="eurekaserver" />
         <module name="pp_wechat_integration" />
         <module name="ppsearch" />
@@ -16,6 +16,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="adminapi" target="1.8" />
       <module name="configserver" target="1.8" />
       <module name="demo" target="1.8" />
       <module name="eurekaconsumer" target="1.8" />
