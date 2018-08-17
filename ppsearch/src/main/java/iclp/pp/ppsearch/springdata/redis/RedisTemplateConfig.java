@@ -18,7 +18,7 @@ public class RedisTemplateConfig {
     }
 
     JedisConnectionFactory jedisConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration("192.168.20.124", 6379);
+        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration("192.168.19.200", 6379);
 //        redisStandaloneConfiguration.setPassword(RedisPassword.of("yourRedisPasswordIfAny"));
         return new JedisConnectionFactory(redisStandaloneConfiguration);
     }
