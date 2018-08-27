@@ -1,5 +1,6 @@
 package iclp.pp.ppsearch.springdata.redis;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -10,6 +11,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @Configuration
 public class RedisTemplateConfig {
 
+    @Value("${redis.ip:}")
+    private String redisIP;
+
     @Bean
     RedisTemplate redisTemplate() {
         RedisTemplate redisTemplate = new StringRedisTemplate();
@@ -18,7 +22,7 @@ public class RedisTemplateConfig {
     }
 
     JedisConnectionFactory jedisConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration("192.168.19.200", 6379);
+        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(redisIP, 6379);
 //        redisStandaloneConfiguration.setPassword(RedisPassword.of("yourRedisPasswordIfAny"));
         return new JedisConnectionFactory(redisStandaloneConfiguration);
     }

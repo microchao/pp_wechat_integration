@@ -3,6 +3,8 @@ package iclp.pp.ppsearch.controller;
 import com.google.gson.Gson;
 import iclp.pp.ppsearch.model.LoungeSearchModel;
 import iclp.pp.ppsearch.model.RequestJsonModel;
+import iclp.pp.ppsearch.model.SearchLogModel;
+import iclp.pp.ppsearch.service.repository.SearchLogRepository;
 import iclp.pp.ppsearch.util.JsonUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -47,6 +49,9 @@ public class SearchKeywordsController {
     private  String keyword;
 
     @Autowired
+    private SearchLogRepository searchLogRepository;
+
+    @Autowired
     private RedisTemplate redisTemplate;
 
     @RequestMapping(value="/txtsearch",method =  { RequestMethod.GET, RequestMethod.POST })
@@ -66,6 +71,10 @@ public class SearchKeywordsController {
         this.toUserName = requestJsonModel.getOpenid();
         this.FromUserName = requestJsonModel.getToUserName();
         LoungeSearchModel redisLoungeModel = getByRedis(keyword);
+        SearchLogModel searchLogModel = new SearchLogModel();
+        searchLogModel.setKeyword(keyword);
+        searchLogModel.setOpenid(requestJsonModel.getOpenid());
+        logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 开始");
         if(redisLoungeModel != null) {
             long redisStartTime = System.currentTimeMillis();
             articleCount = redisLoungeModel.getArticleCount();
@@ -73,10 +82,10 @@ public class SearchKeywordsController {
             String xml = getLounghNewsXml();
             long redisEndTime = System.currentTimeMillis();
             logger.info("redis此次" + keyword + "请求花费" + (redisEndTime - redisStartTime) + "/ms");
+            saveToMysql(searchLogModel);
             return xml;
         }
         else{
-            logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 开始");
             LoungeSearchModel loungeSearchModel = convertToLoungeSearchModel(keyword);
             if(loungeSearchModel.getResults().get(0).getItemId().equals("00000000-0000-0000-0000-000000000000")) {
                 return getNoResult();
@@ -88,9 +97,14 @@ public class SearchKeywordsController {
 
             String lounghNewsXml = getLounghNewsXml();
             logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 结束");
-
+            saveToMysql(searchLogModel);
             return lounghNewsXml;
         }
+    }
+
+    private void saveToMysql(SearchLogModel searchLog) {
+        searchLogRepository.save(searchLog);
+        logger.info("存mysql=" + searchLog + "成功");
     }
 
     private void saveToRedis(String keyword,LoungeSearchModel loungeSearchModel) {
@@ -227,6 +241,7 @@ public class SearchKeywordsController {
             e.printStackTrace();
         }
         long endTime = System.currentTimeMillis();
+        logger.info("article Count = " + articleCount);
         logger.info("此次" + keyword + "请求花费" + (endTime - startTime) + "/ms");
         loungeSearchModel.setArticleCount(articleCount);
         return loungeSearchModel;
