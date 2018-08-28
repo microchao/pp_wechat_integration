@@ -231,14 +231,21 @@ public class SearchKeywordsController {
 
         HttpGet httpGet = new HttpGet(url);
         LoungeSearchModel loungeSearchModel = null;
+        CloseableHttpResponse closeableHttpResponse = null;
         try {
-            CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpGet);
+            closeableHttpResponse = httpClient.execute(httpGet);
             String body = EntityUtils.toString(closeableHttpResponse.getEntity());
             articleCount = getAricleCount(body);
             Gson gson = new Gson();
             loungeSearchModel = gson.fromJson(body, LoungeSearchModel.class);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try{
+                closeableHttpResponse.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
         long endTime = System.currentTimeMillis();
         logger.info("article Count = " + articleCount);

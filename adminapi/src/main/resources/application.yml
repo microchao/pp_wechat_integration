@@ -1,0 +1,11 @@
+server:
+  port: 8887
+
+spring:
+   cloud:
+      discovery:
+         enabled:false
+   datasource:
+     url: jdbc:mysql://192.168.19.202:3306/ppsearch?verifyServerCertificate=false&useSSL=false&requireSSL=false&characterEncoding=UTF-8&useUnicode=true
+     username: collinson
+     password: iclp2018
