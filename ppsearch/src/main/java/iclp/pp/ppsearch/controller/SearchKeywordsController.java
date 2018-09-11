@@ -3,6 +3,7 @@ package iclp.pp.ppsearch.controller;
 import com.google.gson.Gson;
 import iclp.pp.ppsearch.model.LoungeSearchModel;
 import iclp.pp.ppsearch.model.RequestJsonModel;
+import iclp.pp.ppsearch.model.ResponseXSocialModel;
 import iclp.pp.ppsearch.model.SearchLogModel;
 import iclp.pp.ppsearch.service.repository.SearchLogRepository;
 import iclp.pp.ppsearch.util.JsonUtil;
@@ -76,19 +77,22 @@ public class SearchKeywordsController {
         searchLogModel.setOpenid(requestJsonModel.getOpenid());
         searchLogModel.setSource(requestJsonModel.getSource());
         logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 开始");
+        String xml = null;
+        String code = null;
         if(redisLoungeModel != null) {
             long redisStartTime = System.currentTimeMillis();
             articleCount = redisLoungeModel.getArticleCount();
             sortLoungeSearchModel(redisLoungeModel);
-            String xml = getLounghNewsXml();
+            xml = getLounghNewsXml();
             long redisEndTime = System.currentTimeMillis();
             logger.info("redis此次" + keyword + "请求花费" + (redisEndTime - redisStartTime) + "/ms");
             saveToMysql(searchLogModel);
-            return xml;
+            code = "200";
         }
         else{
             LoungeSearchModel loungeSearchModel = convertToLoungeSearchModel(keyword);
             if(loungeSearchModel.getResults().get(0).getItemId().equals("00000000-0000-0000-0000-000000000000")) {
+                code = "404";
                 return getNoResult();
             }
             sortLoungeSearchModel(loungeSearchModel);
@@ -96,11 +100,18 @@ public class SearchKeywordsController {
             // 插入redis
             saveToRedis(keyword,loungeSearchModel);
 
-            String lounghNewsXml = getLounghNewsXml();
+            xml = getLounghNewsXml();
             logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 结束");
             saveToMysql(searchLogModel);
-            return lounghNewsXml;
+
         }
+        if(code == null) {
+            code = "505";
+        }
+        ResponseXSocialModel responseXSocialModel = new ResponseXSocialModel();
+        responseXSocialModel.setCode(code);
+        responseXSocialModel.setXml(xml);
+        return gson.toJson(responseXSocialModel);
     }
 
     private void saveToMysql(SearchLogModel searchLog) {

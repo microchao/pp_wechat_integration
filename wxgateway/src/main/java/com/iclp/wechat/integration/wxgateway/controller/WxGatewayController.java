@@ -2,6 +2,7 @@ package com.iclp.wechat.integration.wxgateway.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.iclp.wechat.integration.wxgateway.model.ResponseXSocialModel;
 import com.iclp.wechat.integration.wxgateway.model.XSocialRequestModel;
 import com.iclp.wechat.integration.wxgateway.model.XSocialResponseModel;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@Scope("request")
+//@Scope("request")
 public class WxGatewayController {
 
     private Logger logger = LoggerFactory.getLogger(WxGatewayController.class);;
@@ -92,11 +93,11 @@ public class WxGatewayController {
         String requestJson = gson.toJson(map);
         HttpEntity<String> requestParam = new HttpEntity<String>(requestJson, headers);
         logger.info("xSocialSearch 请求json" + requestJson);
-        String object = restTemplate().postForObject("http://ppsearch:8888/txtsearch",requestParam,String.class);
+        ResponseXSocialModel responseXSocialModel = restTemplate().postForObject("http://ppsearch:8888/txtsearch",requestParam,ResponseXSocialModel.class);
         XSocialResponseModel xSocialResponseModel = new XSocialResponseModel();
-        xSocialResponseModel.setCode("200");
-        xSocialResponseModel.setResult(object);
-        System.out.println(object);
+        xSocialResponseModel.setCode(responseXSocialModel.getCode());
+        xSocialResponseModel.setResult(responseXSocialModel.getXml());
+        logger.info(gson.toJson(responseXSocialModel));
         return gson.toJson(xSocialResponseModel,XSocialResponseModel.class);
     }
 
