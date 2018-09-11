@@ -1,6 +1,6 @@
 package com.iclp.wechat.integration.wxgateway.model;
 
-public class XSocialModel {
+public class XSocialRequestModel {
 
     private String WeChatID;
 

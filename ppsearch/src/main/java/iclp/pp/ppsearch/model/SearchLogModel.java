@@ -1,8 +1,6 @@
 package iclp.pp.ppsearch.model;
 
 
-import com.google.gson.Gson;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -17,6 +15,8 @@ public class SearchLogModel {
     private String openid;
 
     private String keyword;
+
+    private String source;
 
     public int getId() {
         return id;
@@ -42,8 +42,16 @@ public class SearchLogModel {
         this.keyword = keyword;
     }
 
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
     @Override
     public String toString() {
-        return openid + "," + keyword;
+        return openid + "," + keyword + "," + source;
     }
 }

@@ -19,4 +19,6 @@ public class RequestJsonModel {
     private String content;
 
     private  String toUserName;
+
+    private String source;
 }

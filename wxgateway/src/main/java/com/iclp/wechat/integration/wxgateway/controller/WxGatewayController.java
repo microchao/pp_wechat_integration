@@ -1,10 +1,9 @@
 package com.iclp.wechat.integration.wxgateway.controller;
 
 import com.google.gson.Gson;
-import com.iclp.wechat.integration.wxgateway.model.XSocialModel;
-import org.json.HTTP;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.GsonBuilder;
+import com.iclp.wechat.integration.wxgateway.model.XSocialRequestModel;
+import com.iclp.wechat.integration.wxgateway.model.XSocialResponseModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +20,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,29 +71,33 @@ public class WxGatewayController {
      */
     @RequestMapping(value = "/xSocialSearch", method = {RequestMethod.GET, RequestMethod.POST})
     public String xSocialSearch(HttpServletRequest request) {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
         StringBuffer jb = new StringBuffer();
         String line = null;
-        XSocialModel xSocialModel = null;
+        XSocialRequestModel xSocialModel = null;
         try {
             BufferedReader reader = request.getReader();
             while ((line = reader.readLine()) != null)
                 jb.append(line);
-            xSocialModel = gson.fromJson(jb.toString(),XSocialModel.class);
-
-            System.out.println();
+            xSocialModel = gson.fromJson(jb.toString(),XSocialRequestModel.class);
         } catch (Exception e) { /*report an error*/ }
         Map map = new HashMap();
         map.put("toUserName",xSocialModel.getWeChatID());
         map.put("openid",xSocialModel.getOpenid());
 //        map.put("nickname",nickname);
         map.put("content",xSocialModel.getKeywords());
+        map.put("source","xsocial");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         String requestJson = gson.toJson(map);
         HttpEntity<String> requestParam = new HttpEntity<String>(requestJson, headers);
+        logger.info("xSocialSearch 请求json" + requestJson);
         String object = restTemplate().postForObject("http://ppsearch:8888/txtsearch",requestParam,String.class);
-        return object;
+        XSocialResponseModel xSocialResponseModel = new XSocialResponseModel();
+        xSocialResponseModel.setCode("200");
+        xSocialResponseModel.setResult(object);
+        System.out.println(object);
+        return gson.toJson(xSocialResponseModel,XSocialResponseModel.class);
     }
 
     public String requestToMsgSearch(Map map,Map requestMap) {

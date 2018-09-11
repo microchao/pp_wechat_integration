@@ -74,6 +74,7 @@ public class SearchKeywordsController {
         SearchLogModel searchLogModel = new SearchLogModel();
         searchLogModel.setKeyword(keyword);
         searchLogModel.setOpenid(requestJsonModel.getOpenid());
+        searchLogModel.setSource(requestJsonModel.getSource());
         logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 开始");
         if(redisLoungeModel != null) {
             long redisStartTime = System.currentTimeMillis();
