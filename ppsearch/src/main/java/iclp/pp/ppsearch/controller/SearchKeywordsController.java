@@ -61,6 +61,7 @@ public class SearchKeywordsController {
 
         Gson gson = JsonUtil.instanceOfGson();
         RequestJsonModel requestJsonModel = gson.fromJson(jsonString,RequestJsonModel.class);
+
         if(requestJsonModel.getEchostr() != null) {
             return requestJsonModel.getEchostr();
         }
@@ -69,6 +70,7 @@ public class SearchKeywordsController {
         logger = LoggerFactory.getLogger(SearchKeywordsController.class);
 //        Map map = XmlUtil.parseXml(request);
         keyword = requestJsonModel.getContent();
+        logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 开始");
         this.toUserName = requestJsonModel.getOpenid();
         this.FromUserName = requestJsonModel.getToUserName();
         LoungeSearchModel redisLoungeModel = getByRedis(keyword);
@@ -76,7 +78,6 @@ public class SearchKeywordsController {
         searchLogModel.setKeyword(keyword);
         searchLogModel.setOpenid(requestJsonModel.getOpenid());
         searchLogModel.setSource(requestJsonModel.getSource());
-        logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 开始");
         String xml = null;
         String code = null;
         if(redisLoungeModel != null) {
@@ -93,24 +94,25 @@ public class SearchKeywordsController {
             LoungeSearchModel loungeSearchModel = convertToLoungeSearchModel(keyword);
             if(loungeSearchModel.getResults().get(0).getItemId().equals("00000000-0000-0000-0000-000000000000")) {
                 code = "404";
-                return getNoResult();
+                ResponseXSocialModel responseXSocialModel = new ResponseXSocialModel();
+                responseXSocialModel.setCode(code);
+                responseXSocialModel.setXml(getNoResult());
+                return gson.toJson(responseXSocialModel);
             }
             sortLoungeSearchModel(loungeSearchModel);
-
             // 插入redis
             saveToRedis(keyword,loungeSearchModel);
-
+            code = "200";
             xml = getLounghNewsXml();
-            logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 结束");
             saveToMysql(searchLogModel);
-
         }
         if(code == null) {
-            code = "505";
+            code = "500";
         }
         ResponseXSocialModel responseXSocialModel = new ResponseXSocialModel();
         responseXSocialModel.setCode(code);
         responseXSocialModel.setXml(xml);
+        logger.info("openid=" + requestJsonModel.getOpenid() + " 搜索：" + keyword + " 结束");
         return gson.toJson(responseXSocialModel);
     }
 

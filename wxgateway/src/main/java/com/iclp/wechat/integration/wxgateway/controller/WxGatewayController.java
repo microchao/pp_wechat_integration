@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +40,8 @@ public class WxGatewayController {
                          @RequestParam(value = "openid", required = false) String openid,
                          @RequestParam(value = "echostr", required = false) String echostr,
                          HttpServletRequest request) {
+        Map requestMap = XmlUtil.parseXml(request);
+        logger.info("微信请求" + requestMap + "开始");
         if(echostr!= null ) {
             return echostr;
         }
@@ -49,11 +52,13 @@ public class WxGatewayController {
 //        map.put("nonce",nonce);
         map.put("openid",openid);
         map.put("echostr",echostr);
-        Map requestMap = XmlUtil.parseXml(request);
+
         String msgType = requestMap.get("MsgType").toString();
-        logger.info("此次请求内容：" + requestMap);
+
         if(msgType.equals("text")) {
-           return requestToMsgSearch(map,requestMap);
+            String xml = requestToMsgSearch(map,requestMap);
+            logger.info("微信请求" + requestMap + "结束");
+            return xml;
         }else{
             String xml = "<xml> " +
                     "       <ToUserName>"  + openid + "</ToUserName> " +
@@ -92,25 +97,30 @@ public class WxGatewayController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         String requestJson = gson.toJson(map);
         HttpEntity<String> requestParam = new HttpEntity<String>(requestJson, headers);
-        logger.info("xSocialSearch 请求json" + requestJson);
+        logger.info("xSocialSearch 请求json" + requestJson + " 开始");
         ResponseXSocialModel responseXSocialModel = restTemplate().postForObject("http://ppsearch:8888/txtsearch",requestParam,ResponseXSocialModel.class);
         XSocialResponseModel xSocialResponseModel = new XSocialResponseModel();
         xSocialResponseModel.setCode(responseXSocialModel.getCode());
         xSocialResponseModel.setResult(responseXSocialModel.getXml());
-        logger.info(gson.toJson(responseXSocialModel));
+        logger.info("ppsearch接口返回内容 " + gson.toJson(responseXSocialModel));
+        logger.info("xSocialSearch 请求json" + requestJson + " 结束");
         return gson.toJson(xSocialResponseModel,XSocialResponseModel.class);
+
     }
 
     public String requestToMsgSearch(Map map,Map requestMap) {
         map.put("content",requestMap.get("Content").toString());
         map.put("toUserName",requestMap.get("ToUserName").toString());
+        map.put("source","wx");
         Gson gson = new Gson();
         String requestJson = gson.toJson(map);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestParam = new HttpEntity<String>(requestJson, headers);
-        String object = restTemplate().postForObject("http://ppsearch:8888/txtsearch",requestParam,String.class);
-        return object;
+        ResponseXSocialModel responseXSocialModel = restTemplate().postForObject("http://ppsearch:8888/txtsearch",requestParam,ResponseXSocialModel.class);
+        String xml = responseXSocialModel.getXml();
+        logger.info("微信请求ppsearch返回 " +  xml);
+        return xml;
     }
 
 
