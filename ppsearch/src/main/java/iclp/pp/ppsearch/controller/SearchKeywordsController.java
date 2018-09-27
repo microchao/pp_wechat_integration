@@ -168,7 +168,6 @@ public class SearchKeywordsController {
         for(LoungeSearchModel model : allLougeSearchModelList) {
             if(model.getCode() == null) {
                result.add(0,model);
-               continue;
             }
             if(model.getCode() != null && model.getCode().toLowerCase().equals(keyword.toLowerCase())) {
                 topOne = model;

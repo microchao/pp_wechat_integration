@@ -91,7 +91,7 @@ public class WxGatewayController {
         map.put("toUserName",xSocialModel.getWeChatID());
         map.put("openid",xSocialModel.getOpenid());
 //        map.put("nickname",nickname);
-        map.put("content",xSocialModel.getKeywords());
+        map.put("content",xSocialModel.getKeywords().replaceAll("机场","").replaceAll("機場",""));
         map.put("source","xsocial");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
