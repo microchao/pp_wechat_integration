@@ -210,7 +210,7 @@ public class SearchKeywordsController {
             limit++;
             String picUrl = "https://d10mzz35brm2m8.cloudfront.net/Global/Logos/logo-rounded-7d731234-66ec-45eb-9134-7fdd1b29361b.png?h=46&la=zh-CN&w=46";
             if (limit == 1) {
-                picUrl = "https://d10mzz35brm2m8.cloudfront.net/Global/Logos/logo-footer-f5552661-a02c-4aae-afac-4cd7d17c3246.png?h=101&la=zh-CN&w=236";
+                picUrl = "https://mmbiz.qpic.cn/mmbiz_png/ZAtZqscXMmVVDYKxJ9TO13YGzy85TWMvIgtGIklJuYBnOxecoREgVdvlM29NtiaxNXiaKqgGc2YNmljLaPbLdaTg/0?wx_fmt=png";
             }
             stringBuffer.append("<item>" +
                     "  <Title>" + loungeSearchModelEntity.getName() + "</Title> " +

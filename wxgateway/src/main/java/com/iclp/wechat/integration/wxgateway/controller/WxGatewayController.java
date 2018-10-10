@@ -40,11 +40,11 @@ public class WxGatewayController {
                          @RequestParam(value = "openid", required = false) String openid,
                          @RequestParam(value = "echostr", required = false) String echostr,
                          HttpServletRequest request) {
-        Map requestMap = XmlUtil.parseXml(request);
-        logger.info("微信请求" + requestMap + "开始");
         if(echostr!= null ) {
             return echostr;
         }
+        Map requestMap = XmlUtil.parseXml(request);
+        logger.info("微信请求" + requestMap + "开始");
         Map<String,String> map = new HashMap<>();
         map.put("name", name);
 //        map.put("signature",signature);
@@ -91,7 +91,7 @@ public class WxGatewayController {
         map.put("toUserName",xSocialModel.getWeChatID());
         map.put("openid",xSocialModel.getOpenid());
 //        map.put("nickname",nickname);
-        map.put("content",xSocialModel.getKeywords().replaceAll("机场","").replaceAll("機場",""));
+        map.put("content",xSocialModel.getKeywords().replaceAll("机场","").replaceAll("機場","").replaceAll("Airport","").replaceAll("airport",""));
         map.put("source","xsocial");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
