@@ -168,6 +168,7 @@ public class SearchKeywordsController {
         for(LoungeSearchModel model : allLougeSearchModelList) {
             if(model.getCode() == null) {
                result.add(0,model);
+               continue;
             }
             if(model.getCode() != null && model.getCode().toLowerCase().equals(keyword.toLowerCase())) {
                 topOne = model;
@@ -210,7 +211,7 @@ public class SearchKeywordsController {
             limit++;
             String picUrl = "https://d10mzz35brm2m8.cloudfront.net/Global/Logos/logo-rounded-7d731234-66ec-45eb-9134-7fdd1b29361b.png?h=46&la=zh-CN&w=46";
             if (limit == 1) {
-                picUrl = "https://mmbiz.qpic.cn/mmbiz_png/ZAtZqscXMmVVDYKxJ9TO13YGzy85TWMvIgtGIklJuYBnOxecoREgVdvlM29NtiaxNXiaKqgGc2YNmljLaPbLdaTg/0?wx_fmt=png";
+                picUrl = "https://mmbiz.qpic.cn/mmbiz_png/ZAtZqscXMmVVDYKxJ9TO13YGzy85TWMv9jyt3J7JJpN4IWSh6N0Khl9QTBXSkjibsh1TD0UbQlKy3MvY8RMjTVQ/0?wx_fmt=png";
             }
             stringBuffer.append("<item>" +
                     "  <Title>" + loungeSearchModelEntity.getName() + "</Title> " +
