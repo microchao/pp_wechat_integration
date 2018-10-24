@@ -211,11 +211,15 @@ public class SearchKeywordsController {
             limit++;
             String picUrl = "https://d10mzz35brm2m8.cloudfront.net/Global/Logos/logo-rounded-7d731234-66ec-45eb-9134-7fdd1b29361b.png?h=46&la=zh-CN&w=46";
             if (limit == 1) {
-                picUrl = "https://mmbiz.qpic.cn/mmbiz_png/ZAtZqscXMmVVDYKxJ9TO13YGzy85TWMv9jyt3J7JJpN4IWSh6N0Khl9QTBXSkjibsh1TD0UbQlKy3MvY8RMjTVQ/0?wx_fmt=png";
+                picUrl = "https://mmbiz.qpic.cn/mmbiz_png/ZAtZqscXMmUugkQGZIpIL0Gyf1Xmc8O2SjCtLiaUYHdDTxOWjYExo3TxB8nc9fGnicwZBj1KARqFBGkzQ7qnVyMA/0?wx_fmt=png";
+            }
+            String code = loungeSearchModelEntity.getCode();
+            if(code == null) {
+                code="点击查看机场贵宾室信息";
             }
             stringBuffer.append("<item>" +
                     "  <Title>" + loungeSearchModelEntity.getName() + "</Title> " +
-                    "  <Description>" + loungeSearchModelEntity.getCode() + "</Description>" +
+                    "  <Description>" + code + "</Description>" +
                     "  <PicUrl>" + picUrl + "</PicUrl>" +
                     "  <Url>" + loungeSearchModelEntity.getUrl() + "</Url>" +
                     "</item>");
