@@ -221,7 +221,7 @@ public class SearchKeywordsController {
                     "  <Title>" + loungeSearchModelEntity.getName() + "</Title> " +
                     "  <Description>" + code + "</Description>" +
                     "  <PicUrl>" + picUrl + "</PicUrl>" +
-                    "  <Url>" + loungeSearchModelEntity.getUrl() + "</Url>" +
+                    "  <Url>" + "https://www.prioritypass.com" + loungeSearchModelEntity.getUrl() + "</Url>" +
                     "</item>");
             if (limit == 8) break;
         }
